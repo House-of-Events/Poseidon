@@ -1,6 +1,6 @@
 
-const config = require('../../config');
-const FixturesDailyConsumer = require('./consumer');
+import FixturesDailyConsumer from './consumer.js';
+import config from '../../config/index.js';
 
 const consumer = new FixturesDailyConsumer(config.sqs_fixtures_daily_queue_url, 10);
 
