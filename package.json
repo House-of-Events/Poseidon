@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.821.0",
     "@aws-sdk/node-http-handler": "^3.370.0",
