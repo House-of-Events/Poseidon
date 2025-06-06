@@ -34,8 +34,6 @@ node_modules/
 # Ignore dist
 dist/
 
-# Ignore config
-config/
 
 # Ignore logs
 logs/
