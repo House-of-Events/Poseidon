@@ -4,24 +4,34 @@ import config from '../config/index.js';
 
 // Get secrets from Chamber
 function getChamberSecrets(service) {
-  try {
-    const output = execSync(`chamber read ${service} --format json`).toString();
-    return JSON.parse(output);
-  } catch (error) {
-    console.error(`Error reading Chamber secrets for ${service}:`, error);
-    process.exit(1);
-  }
+  const requiredKeys = [
+    'AWS_ACCESS_KEY_ID',
+    'AWS_SECRET_ACCESS_KEY', 
+    'sqs_fixtures_daily_queue_url'
+  ];
+  
+  const secrets = {};
+  
+  requiredKeys.forEach(key => {
+    try {
+      const value = execSync(`chamber read ${service} ${key} -q`).toString().trim();
+      secrets[key] = value;
+    } catch (error) {
+      console.error(`Error reading ${key} from ${service}:`, error.message);
+      process.exit(1);
+    }
+  });
+  
+  return secrets;
 }
 
 const awsSecrets = getChamberSecrets('app-aws');
-const fixturesSecrets = getChamberSecrets('fixtures-daily');
 
 const sqsClient = new SQSClient({
   region: config.AWS_REGION,
   credentials: {
     accessKeyId: awsSecrets.AWS_ACCESS_KEY_ID,
     secretAccessKey: awsSecrets.AWS_SECRET_ACCESS_KEY,
-    sessionToken: awsSecrets.AWS_SESSION_TOKEN
   }
 });
 
@@ -51,11 +61,11 @@ const testFixtures = [
 ];
 
 async function sendTestFixtures() {
-  console.log('Sending test fixtures to queue:', fixturesSecrets.sqs_fixtures_daily_queue_url);
+  console.log('Sending test fixtures to queue:', awsSecrets.sqs_fixtures_daily_queue_url);
   
   for (const fixture of testFixtures) {
     const params = {
-      QueueUrl: fixturesSecrets.sqs_fixtures_daily_queue_url,
+      QueueUrl: awsSecrets.sqs_fixtures_daily_queue_url,
       MessageBody: JSON.stringify(fixture),
       MessageAttributes: {
         'MessageType': {

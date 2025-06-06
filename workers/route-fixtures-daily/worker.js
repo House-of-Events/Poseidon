@@ -2,7 +2,7 @@
 import FixturesDailyConsumer from './consumer.js';
 import config from '../../config/index.js';
 
-const consumer = new FixturesDailyConsumer(config.sqs_fixtures_daily_queue_url, 10);
+const consumer = new FixturesDailyConsumer(config.SQS_FIXTURES_DAILY_QUEUE_URL, 10);
 
 ['SIGINT', 'SIGTERM'].forEach(async (signal) => {
     process.on(signal, async () => {
