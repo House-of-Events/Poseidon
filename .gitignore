@@ -40,3 +40,12 @@ config/
 # Ignore logs
 logs/
 
+
+#pub files
+*.pub
+
+#private files
+*.pem
+
+#key files
+*.key
