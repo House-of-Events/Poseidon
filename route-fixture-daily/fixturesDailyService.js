@@ -1,5 +1,12 @@
 import Config from '../config/index.js';
 import Knex from 'knex';
+
+// Environment-specific SSL configuration
+const isLocal = process.env.NODE_ENV === 'local';
+const sslConfig = isLocal ? false : {
+    rejectUnauthorized: false,
+};
+
 const fixtureDailyDb = Knex({
     client: 'postgresql',
     connection: {
@@ -8,9 +15,7 @@ const fixtureDailyDb = Knex({
         password: Config.DB_PASSWORD,
         database: Config.DB_NAME,
         port: Config.DB_PORT,
-        ssl: {
-            rejectUnauthorized: false,
-          },
+        ssl: sslConfig,
     }
 });
 
@@ -38,7 +43,7 @@ class FixtureDailyService {
           }));
     
           // Perform single bulk upsert - only update the data columns, not date_modified
-          const results = await fixtureDailyDb('daily_fixtures')
+          const results = await fixtureDailyDb('daily_fixtures_routed')
             .insert(recordsToInsert)
             .onConflict('id')
             .merge(['home_team', 'away_team', 'competition', 'fixture_date'])

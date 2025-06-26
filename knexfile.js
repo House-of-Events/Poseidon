@@ -19,10 +19,10 @@ const knexConfig = {
     ...baseConfig,
     connection: {
       host: "localhost",
-      database: "mike-docker",
+      database: "poseidon-docker",
       user: "admin",
       password: "admin",
-      port: 5431
+      port: 5429
     },
   },
   production: {
