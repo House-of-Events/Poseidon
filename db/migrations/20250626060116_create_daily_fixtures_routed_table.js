@@ -14,7 +14,7 @@ export function up(knex) {
       );
     table.string('fixture_id').notNullable();
     table.string('match_id').notNullable(); 
-    table.timestampz('date_time_of_match').notNullable();
+    table.timestamp('date_time_of_match').notNullable();
     table.string('fixture_type').notNullable(); 
     
 
@@ -26,7 +26,7 @@ export function up(knex) {
     // Notification
     table.string('notification_type').notNullable().checkIn(['email', 'slack']).defaultTo('slack');
     table.string('notification_status').notNullable().checkIn(['partial', 'success', 'failed','pending']).defaultTo('pending');
-    table.timestampz('date_time_of_notification_sent').nullable();
+    table.timestamp('date_time_of_notification_sent').nullable();
 
 
     // Timestamps
