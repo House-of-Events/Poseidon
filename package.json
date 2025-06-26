@@ -4,7 +4,15 @@
     "db:migrate:prod": "knex migrate:latest --env production",
     "db:migrate:make": "knex migrate:make",
     "db:migrate:rollback": "knex migrate:rollback",
-    "db:migrate:local": "knex migrate:latest --env development"
+    "db:migrate:local": "knex migrate:latest --env development",
+    "start:local": "NODE_ENV=local node workers/route-fixtures-daily/worker.js",
+    "setup:local": "NODE_ENV=local node scripts/setup-local-sqs.js",
+    "send:test": "NODE_ENV=local node scripts/send-test-fixtures.js",
+    "send:test:prod": "NODE_ENV=production node scripts/send-test-fixtures.js",
+    "purge:sqs": "curl -X POST 'http://localhost:4566/000000000000/fixtures-daily-queue?Action=PurgeQueue'",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "test:worker": "npm run docker:up && sleep 10 && npm run setup:local && npm run start:local"
   },
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.821.0",
