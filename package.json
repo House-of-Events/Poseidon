@@ -9,7 +9,7 @@
     "setup:local": "NODE_ENV=local node scripts/setup-local-sqs.js",
     "send:test": "NODE_ENV=local node scripts/send-test-fixtures.js",
     "send:test:prod": "NODE_ENV=production node scripts/send-test-fixtures.js",
-    "purge:sqs": "curl -X POST 'http://localhost:4566/000000000000/fixtures-daily-queue?Action=PurgeQueue'",
+    "purge:sqs": "aws sqs purge-queue --queue-url http://localhost:4566/000000000000/fixtures-daily-queue --endpoint-url http://localhost:4566 --region us-east-1 --no-sign-request",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "test:worker": "npm run docker:up && sleep 10 && npm run setup:local && npm run start:local"
