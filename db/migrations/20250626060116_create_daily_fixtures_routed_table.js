@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function(knex) {
+export function up(knex) {
   return knex.schema.createTable('daily_fixtures_routed', function (table) {
     table
       .string('id')
@@ -35,12 +35,12 @@ exports.up = function(knex) {
     table.timestamp('date_deleted').nullable();
 
   });
-};
+}
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function(knex) {
+export function down(knex) {
   return knex.schema.dropTable('daily_fixtures_routed');
-};
+}
