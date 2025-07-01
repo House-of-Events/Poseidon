@@ -65,9 +65,9 @@ function getQueueUrl() {
 // Sample fixture data
 const testFixtures = [
   {
-    fixture_id: 'mat_791647',
+    id: 'mat_791647',
     match_id: 'soccer:2025-06-26:Fla:Bay',
-    date_time_of_match: '2024-06-26T15:00:00Z',
+    date_time: '2024-06-26T15:00:00Z',
     fixture_type: 'soccer',
     count_users_to_inform: 150,
     count_users_successfully_notified: 0,
@@ -76,9 +76,9 @@ const testFixtures = [
     notification_status: 'pending'
   },
   {
-    fixture_id: 'mat_791648',
+    id: 'mat_791648',
     match_id: 'soccer:2025-06-27:Fla:Bay',
-    date_time_of_match: '2024-06-27T16:30:00Z',
+    date_time: '2024-06-27T16:30:00Z',
     fixture_type: 'soccer',
     count_users_to_inform: 200,
     count_users_successfully_notified: 0,
@@ -87,9 +87,9 @@ const testFixtures = [
     notification_status: 'pending'
   },
   {
-    fixture_id: 'mat_791649',
+    id: 'mat_791649',
     match_id: 'soccer:2025-06-28:Fla:Bay',
-    date_time_of_match: '2024-06-28T20:00:00Z',
+    date_time: '2024-06-28T20:00:00Z',
     fixture_type: 'soccer',
     count_users_to_inform: 75,
     count_users_successfully_notified: 0,
@@ -121,7 +121,7 @@ async function sendTestFixtures() {
     try {
       const command = new SendMessageCommand(params);
       const response = await sqsClient.send(command);
-      console.log(`Sent fixture ${fixture.fixture_id}:`, response.MessageId);
+      console.log(`Sent fixture ${fixture.id}:`, response.MessageId);
     } catch (error) {
       console.error('Error sending message:', error);
     }
