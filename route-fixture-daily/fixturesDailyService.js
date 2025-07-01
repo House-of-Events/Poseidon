@@ -35,9 +35,9 @@ class FixtureDailyService {
         try {
           // Map incoming data to database column names
           const recordsToInsert = records.map((record) => ({
-            fixture_id: record.fixture_id,
+            fixture_id: record.id,
             match_id: record.match_id,
-            date_time_of_match: record.date_time_of_match,
+            date_time_of_match: record.date_time,
             fixture_type: record.fixture_type,
             count_users_to_inform: record.count_users_to_inform || 0,
             count_users_successfully_notified: record.count_users_successfully_notified || 0,

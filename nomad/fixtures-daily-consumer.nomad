@@ -17,7 +17,7 @@ job "fixtures-daily-consumer" {
       driver = "docker"
 
       config {
-        image = "manan78424/fixtures-daily-consumer:v7"
+        image = "manan78424/fixtures-daily-consumer:v8"
         command = "node"
         args = [
           "workers/route-fixtures-daily/worker.js"

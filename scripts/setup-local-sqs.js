@@ -23,9 +23,9 @@ async function setupLocalSQS() {
         
         // Send a test message
         const testMessage = {
-            fixture_id: 'mat_791647',
+            id: 'mat_791647',
             match_id: 'soccer:2025-06-29:Fla:Bay',
-            date_time_of_match: '2024-06-26T15:00:00Z',
+            date_time: '2024-06-26T15:00:00Z',
             fixture_type: 'soccer',
             count_users_to_inform: 150,
             count_users_successfully_notified: 0,
