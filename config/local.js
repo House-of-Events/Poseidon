@@ -16,4 +16,8 @@ export default {
     
     // SSL Configuration
     SHADOW_DB_SSL: process.env.SHADOW_DB_SSL === 'true' || false,
+
+    ZEUS_API_URL: process.env.ZEUS_API_URL || 'http://localhost:3002/v1',
+    ZEUS_ADMIN_USERNAME: process.env.ZEUS_ADMIN_USERNAME || 'admin',
+    ZEUS_ADMIN_PASSWORD: process.env.ZEUS_ADMIN_PASSWORD || '',
 }; 

@@ -182,6 +182,9 @@ export class FixturesDailyConsumer {
 
             console.log('successfully processed messages', { count: fixtures.length });
 
+            // Call API to create csv with list of users to inform based on fixture_type
+            await fixtureDailyService.createCsv(fixtureBodies);
+ 
             // Delete all fixtures from the queue
             await this.deleteFixtures(fixtures);
             console.log('successfully deleted fixtures', { count: fixtures.length });
