@@ -25,7 +25,7 @@ services:
     image: localstack/localstack:latest
     container_name: poseidon-localstack
     environment:
-      - SERVICES=sqs
+      - SERVICES=sqs,s3
       - DEFAULT_REGION=us-east-1
       - AWS_DEFAULT_REGION=us-east-1
       - DOCKER_HOST=unix:///var/run/docker.sock
