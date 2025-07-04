@@ -2,7 +2,8 @@ import Config from '../config/index.js';
 import Knex from 'knex';
 import axios from 'axios';
 import S3Service from '../lib/s3.js';
-import CsvService from '../lib/csvService.js';
+import CsvService from '../lib/csv.js';
+import { UserList } from '../../test/zeus-user.js';
 // Environment-specific SSL configuration
 const isLocal = process.env.NODE_ENV === 'local';
 const sslConfig = isLocal ? false : {
@@ -88,15 +89,24 @@ class FixtureDailyService {
           const s3Service = new S3Service();
           
           await Promise.all(fixtures.map(async (fixture) => {
-            const response = await axios.get(`${Config.ZEUS_API_URL}/subscribed/users/${fixture.fixture_type}`, {
-              auth: {
-                username: Config.ZEUS_ADMIN_USERNAME,
-                password: Config.ZEUS_ADMIN_PASSWORD
-              }
-            });
-            const users = response.data;
-            console.log(`Retrieved ${users.length} users for fixture type: ${fixture.fixture_type}`);
+            let users = [];
             
+            try {
+              const response = await axios.get(`${Config.ZEUS_API_URL}/subscribed/users/${fixture.fixture_type}`, {
+                auth: {
+                  username: Config.ZEUS_ADMIN_USERNAME,
+                  password: Config.ZEUS_ADMIN_PASSWORD
+                }
+              });
+              users = response.data;
+              console.log(`Retrieved ${users.length} users for fixture type: ${fixture.fixture_type}`);
+            } catch (apiError) {
+              console.log(`Zeus API not available, using mock data for fixture type: ${fixture.fixture_type}`);
+              // Mock user data for local testing
+              users = UserList;
+            }
+
+            console.log("Users", users);
             // Generate CSV content
             const csvContent = CsvService.generateCsvFromUsers(users, {
               fixture_id: fixture.fixture_id || fixture.id,
