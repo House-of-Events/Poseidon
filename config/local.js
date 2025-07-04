@@ -20,4 +20,9 @@ export default {
     ZEUS_API_URL: process.env.ZEUS_API_URL || 'http://localhost:3002/v1',
     ZEUS_ADMIN_USERNAME: process.env.ZEUS_ADMIN_USERNAME || 'admin',
     ZEUS_ADMIN_PASSWORD: process.env.ZEUS_ADMIN_PASSWORD || '',
+
+    S3_BUCKET_NAME: process.env.S3_BUCKET_NAME || 'dev-fixtures-daily-details-bucket',
+    S3_REGION: process.env.S3_REGION || 'us-east-1',
+    S3_ENDPOINT: process.env.S3_ENDPOINT || 'http://localhost:4566',
+    S3_FORCE_PATH_STYLE: process.env.S3_FORCE_PATH_STYLE === 'true' || false,
 }; 
