@@ -1,4 +1,4 @@
-import FixtureDailyService from '../../route-fixture-daily/fixturesDailyService.js';
+import FixtureDailyService from '../../route-fixture-daily/route-fixtures-daily.js';
 import newSQSClient from '../../lib/sqs.js';
 import { ReceiveMessageCommand, DeleteMessageBatchCommand } from '@aws-sdk/client-sqs';
 const fixtureDailyService = new FixtureDailyService();
