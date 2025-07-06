@@ -25,4 +25,12 @@ export default {
     S3_REGION: process.env.S3_REGION || 'us-east-1',
     S3_ENDPOINT: process.env.S3_ENDPOINT || 'http://localhost:4566',
     S3_FORCE_PATH_STYLE: process.env.S3_FORCE_PATH_STYLE === 'true' || false,
+
+    // Email Configuration for local testing
+    SMTP_HOST: process.env.SMTP_HOST || 'smtp.gmail.com',
+    SMTP_PORT: process.env.SMTP_PORT || 587,
+    SMTP_USER: process.env.SMTP_USER || 'houseofevents.tracker@gmail.com',
+    SMTP_PASSWORD: process.env.SMTP_PASSWORD || 'insufsiapcixanjd',
+    SMTP_FROM: process.env.SMTP_FROM || 'houseofevents.tracker@gmail.com',
+    TEST_EMAIL: process.env.TEST_EMAIL || 'manan78424@gmail.com',
 }; 

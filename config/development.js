@@ -19,6 +19,11 @@ function getChamberSecrets(service) {
       'zeus_api_url',
       'zeus_admin_username',
       'zeus_admin_password',
+      'smtp_host',
+      'smtp_port',
+      'smtp_user',
+      'smtp_password',
+      'smtp_from'
     ];
 
     const temporaryKeys = [
@@ -29,6 +34,8 @@ function getChamberSecrets(service) {
       'zeus_api_url',
       'zeus_admin_username',
       'zeus_admin_password',
+      'smtp_host',
+      'smtp_port',
     ];
     const secrets = {};
     
@@ -77,5 +84,11 @@ export default {
     ZEUS_API_URL: appSecrets.zeus_api_url || 'http://localhost:3002/v1',
     ZEUS_ADMIN_USERNAME: appSecrets.zeus_admin_username || 'admin',
     ZEUS_ADMIN_PASSWORD: appSecrets.zeus_admin_password || '',
-    
+
+    // Email Configuration
+    SMTP_HOST: appSecrets.smtp_host || 'smtp.gmail.com',
+    SMTP_PORT: appSecrets.smtp_port || 587,
+    SMTP_USER: appSecrets.smtp_user,
+    SMTP_PASSWORD: appSecrets.smtp_password,
+    SMTP_FROM: appSecrets.smtp_from,
 };

@@ -3,6 +3,7 @@ import Knex from 'knex';
 import axios from 'axios';
 import S3Service from '../lib/s3.js';
 import CsvService from '../lib/csv.js';
+import EmailService from '../lib/email/email.js';
 import { UserList } from '../../test/zeus-user.js';
 // Environment-specific SSL configuration
 const isLocal = process.env.NODE_ENV === 'local';
@@ -25,6 +26,7 @@ const fixtureDailyDb = Knex({
 class FixtureDailyService {
     constructor(db){
         this.db = db;
+        this.emailService = new EmailService();
     }
 
     async bulkUpsert(records, { updateColumns }) {
@@ -47,6 +49,7 @@ class FixtureDailyService {
             count_users_failed_to_notify: record.count_users_failed_to_notify || 0,
             notification_type: record.notification_type || 'slack',
             notification_status: record.notification_status || 'pending',
+            fixture_data: record.fixture_data || null,
           }));
     
           // Perform simple bulk insert
@@ -66,6 +69,37 @@ class FixtureDailyService {
             error: err.message,
           });
           throw err;
+        }
+    }
+    
+    async updateEmailCounts(fixtureId, successfulCount, failedCount) {
+        if (!fixtureDailyDb) {
+            console.log('fixtureDailyDb is not initialized, skipping email count update');
+            return;
+        }
+
+        try {
+            // Determine notification status based on email results
+            let notificationStatus = 'pending';
+            if (successfulCount > 0 && failedCount === 0) {
+                notificationStatus = 'success';
+            } else if (successfulCount === 0 && failedCount > 0) {
+                notificationStatus = 'failed';
+            } else if (successfulCount > 0 && failedCount > 0) {
+                notificationStatus = 'partial';
+            }
+
+            await fixtureDailyDb('daily_fixtures_routed')
+                .where('fixture_id', fixtureId)
+                .update({
+                    count_users_successfully_notified: successfulCount,
+                    count_users_failed_to_notify: failedCount,
+                    notification_status: notificationStatus
+                });
+
+            console.log(`Updated email counts for fixture ${fixtureId}: ${successfulCount} successful, ${failedCount} failed, status: ${notificationStatus}`);
+        } catch (error) {
+            console.error('Error updating email counts:', error);
         }
     }
     
@@ -105,13 +139,49 @@ class FixtureDailyService {
               // Mock user data for local testing
               users = UserList;
             }
+            // Send emails to users if they have email addresses
+            let successfulEmails = 0;
+            let failedEmails = 0;
+            
+            if (users.length > 0) {
+              try {
+                // Prepare fixture data for email (combine fixture with fixture_data if available)
+                const emailFixtureData = {
+                  ...fixture,
+                  ...(fixture.fixture_data ? 
+                    (typeof fixture.fixture_data === 'string' ? JSON.parse(fixture.fixture_data) : fixture.fixture_data) 
+                    : {})
+                };
+                
+                const emailResult = await this.emailService.sendBulkFixtureEmails(users, emailFixtureData);
+                successfulEmails = emailResult.successful;
+                failedEmails = emailResult.failed;
+                
+                console.log(`Email sending completed for fixture ${fixture.fixture_id || fixture.id}: ${successfulEmails} successful, ${failedEmails} failed`);
+                
+                // Update database with email counts
+                const fixtureId = fixture.fixture_id || fixture.id;
+                await this.updateEmailCounts(fixtureId, successfulEmails, failedEmails);
+                
+              } catch (emailError) {
+                console.error('Error sending emails:', emailError);
+                failedEmails = users.length; // All emails failed if there was an error
+                successfulEmails = 0;
+                
+                // Update database with failed counts
+                const fixtureId = fixture.fixture_id || fixture.id;
+                await this.updateEmailCounts(fixtureId, successfulEmails, failedEmails);
+              }
+            } else {
+              console.log(`No users found for fixture ${fixture.fixture_id || fixture.id}, skipping email sending`);
+            }
 
-            console.log("Users", users);
             // Generate CSV content
             const csvContent = CsvService.generateCsvFromUsers(users, {
               fixture_id: fixture.fixture_id || fixture.id,
               fixture_type: fixture.fixture_type,
               match_id: fixture.match_id,
+              fixture_data: fixture.fixture_data,
               date_time: fixture.date_time
             });
             
@@ -121,12 +191,17 @@ class FixtureDailyService {
             // Upload to S3
             await s3Service.uploadCsvFile(fileName, csvContent);
             console.log(`CSV file uploaded to S3: ${fileName}`);
+
+            
+            
           }));
         } catch (error) {
           // Dont throw error, just log it
           console.log('Error creating csv', error);
         }
     }
+
+    
 }
 
 export default FixtureDailyService;
