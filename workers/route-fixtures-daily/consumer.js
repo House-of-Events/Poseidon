@@ -38,10 +38,11 @@ export class FixturesDailyConsumer {
         while (this.isRunning() || !this.#isDone) {
             try {
                 await this.processFixtures();
-                await new Promise(resolve => setTimeout(resolve, 10000));
+                console.log('Waiting for 600 seconds for next batch');
+                await new Promise(resolve => setTimeout(resolve, 600000));
             } catch (error) {
                 console.error('error processing fixtures', error);
-                await new Promise(resolve => setTimeout(resolve, 10000));
+                await new Promise(resolve => setTimeout(resolve, 600000));
             }
         }
 
@@ -59,9 +60,9 @@ export class FixturesDailyConsumer {
         let count = 0;
         while (!this.#isDone) {
             count++;
-            await new Promise(resolve => setTimeout(resolve, 5000));
-            if (count > 10) {
-                console.log('consumer did not stop after 10 seconds, force stopping');
+            await new Promise(resolve => setTimeout(resolve, 10000));
+            if (count > 30) {
+                console.log('consumer did not stop after 30 seconds, force stopping');
                 break;
             }
         }
@@ -78,7 +79,7 @@ export class FixturesDailyConsumer {
         while (totalReceived < this.#maxMessages) {
             const remaining = this.#maxMessages - totalReceived;
             const batchSize = Math.min(this.#batchSize, remaining);
-            const pollLength = 1;
+            const pollLength = 30; 
             const command = new ReceiveMessageCommand({
                 QueueUrl: this.queueUrl,
                 MaxNumberOfMessages: batchSize,
@@ -88,7 +89,7 @@ export class FixturesDailyConsumer {
             try {
                 const result = await this.#sqsClient.send(command);
                 if (!result.Messages || result.Messages.length === 0) {
-                    console.log('no fixtures found in queue, exiting', { total_received: totalReceived, remaining: remaining });
+                    console.log('no fixtures found in queue after long poll, exiting', { total_received: totalReceived, remaining: remaining });
                     break;
                 }
 

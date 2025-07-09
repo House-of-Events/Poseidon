@@ -4,7 +4,7 @@ import axios from 'axios';
 import S3Service from '../lib/s3.js';
 import CsvService from '../lib/csv.js';
 import EmailService from '../lib/email/email.js';
-import { UserList } from '../../test/zeus-user.js';
+import { UserList } from '../test/zeus-user.js';
 // Environment-specific SSL configuration
 const isLocal = process.env.NODE_ENV === 'local';
 const sslConfig = isLocal ? false : {
