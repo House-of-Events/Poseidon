@@ -12,7 +12,9 @@
     "purge:sqs": "aws sqs purge-queue --queue-url http://localhost:4566/000000000000/fixtures-daily-queue --endpoint-url http://localhost:4566 --region us-east-1 --no-sign-request",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "test:worker": "npm run docker:up && sleep 10 && npm run setup:aws-worker && npm run start:local"
+    "test:worker": "npm run docker:up && sleep 10 && npm run purge:sqs && npm run setup:aws-worker && npm run start:local",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.840.0",
@@ -25,8 +27,12 @@
     "dotenv": "^16.5.0",
     "https": "^1.0.0",
     "knex": "^3.1.0",
+    "logslazy": "^1.0.8",
     "nodemailer": "^6.9.7",
     "pg": "^8.16.2",
     "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
   }
 }

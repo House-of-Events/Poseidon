@@ -18,11 +18,11 @@ const knexConfig = {
   development: {
     ...baseConfig,
     connection: {
-      host: "localhost",
-      database: "poseidon-docker",
-      user: "admin",
-      password: "admin",
-      port: 5429
+      host: 'localhost',
+      database: 'poseidon-docker',
+      user: 'admin',
+      password: 'admin',
+      port: 5429,
     },
   },
   production: {
