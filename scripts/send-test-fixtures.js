@@ -1,42 +1,44 @@
 import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 import { execSync } from 'child_process';
 import config from '../config/index.js';
-
+import logger from '../lib/logger.js';
 // Get secrets from Chamber for production
 function getChamberSecrets(service) {
   const requiredKeys = [
     'AWS_ACCESS_KEY_ID',
-    'AWS_SECRET_ACCESS_KEY', 
-    'sqs_fixtures_daily_queue_url'
+    'AWS_SECRET_ACCESS_KEY',
+    'sqs_fixtures_daily_queue_url',
   ];
-  
+
   const secrets = {};
-  
+
   requiredKeys.forEach(key => {
     try {
-      const value = execSync(`chamber read ${service} ${key} -q`).toString().trim();
+      const value = execSync(`chamber read ${service} ${key} -q`)
+        .toString()
+        .trim();
       secrets[key] = value;
     } catch (error) {
-      console.error(`Error reading ${key} from ${service}:`, error.message);
+      logger.error(`Error reading ${key} from ${service}:`, error.message);
       process.exit(1);
     }
   });
-  
+
   return secrets;
 }
 
 // Create SQS client based on environment
 function createSQSClient() {
   const isLocal = process.env.NODE_ENV === 'local';
-  
+
   if (isLocal) {
     return new SQSClient({
       endpoint: 'http://localhost:4566',
       region: 'us-east-1',
       credentials: {
         accessKeyId: 'test',
-        secretAccessKey: 'test'
-      }
+        secretAccessKey: 'test',
+      },
     });
   } else {
     const awsSecrets = getChamberSecrets('app-aws');
@@ -45,7 +47,7 @@ function createSQSClient() {
       credentials: {
         accessKeyId: awsSecrets.AWS_ACCESS_KEY_ID,
         secretAccessKey: awsSecrets.AWS_SECRET_ACCESS_KEY,
-      }
+      },
     });
   }
 }
@@ -53,7 +55,7 @@ function createSQSClient() {
 // Get queue URL based on environment
 function getQueueUrl() {
   const isLocal = process.env.NODE_ENV === 'local';
-  
+
   if (isLocal) {
     return 'http://localhost:4566/000000000000/fixtures-daily-queue';
   } else {
@@ -75,58 +77,58 @@ const testFixtures = [
     notification_type: 'slack',
     notification_status: 'pending',
     fixture_data: {
-      "date": "2025-06-15",
-      "time": "16:00:00",
-      "venue": "TQL Stadium",
-      "league": "FIFA Club World Cup",
-      "periods": {
-        "first": 1750003200,
-        "second": 1750006800
+      date: '2025-06-15',
+      time: '16:00:00',
+      venue: 'TQL Stadium',
+      league: 'FIFA Club World Cup',
+      periods: {
+        first: 1750003200,
+        second: 1750006800,
       },
-      "referee": "Issa Sy",
-      "timezone": "UTC",
-      "away_team": "Chelsea FC",
-      "date_time": "2025-06-15T16:00:00.000Z",
-      "home_team": "Bayern München",
-      "timestamp": 1750003200,
-      "sport_type": "soccer",
-      "teams_details": {
-        "away": {
-          "id": 2537,
-          "logo": "https://media.api-sports.io/football/teams/2537.png",
-          "name": "Chelsea FC",
-          "winner": false
+      referee: 'Issa Sy',
+      timezone: 'UTC',
+      away_team: 'Chelsea FC',
+      date_time: '2025-06-15T16:00:00.000Z',
+      home_team: 'Bayern München',
+      timestamp: 1750003200,
+      sport_type: 'soccer',
+      teams_details: {
+        away: {
+          id: 2537,
+          logo: 'https://media.api-sports.io/football/teams/2537.png',
+          name: 'Chelsea FC',
+          winner: false,
         },
-        "home": {
-          "id": 157,
-          "logo": "https://media.api-sports.io/football/teams/157.png",
-          "name": "Bayern München",
-          "winner": true
-        }
+        home: {
+          id: 157,
+          logo: 'https://media.api-sports.io/football/teams/157.png',
+          name: 'Bayern München',
+          winner: true,
+        },
       },
-      "venue_details": {
-        "id": 19229,
-        "city": "Cincinnati, Ohio",
-        "name": "TQL Stadium"
+      venue_details: {
+        id: 19229,
+        city: 'Cincinnati, Ohio',
+        name: 'TQL Stadium',
       },
-      "api_fixture_id": "1321681",
-      "league_details": {
-        "id": 15,
-        "flag": null,
-        "logo": "https://media.api-sports.io/football/leagues/15.png",
-        "name": "FIFA Club World Cup",
-        "round": "Group Stage - 1",
-        "season": 2025,
-        "country": "World",
-        "standings": true
+      api_fixture_id: '1321681',
+      league_details: {
+        id: 15,
+        flag: null,
+        logo: 'https://media.api-sports.io/football/leagues/15.png',
+        name: 'FIFA Club World Cup',
+        round: 'Group Stage - 1',
+        season: 2025,
+        country: 'World',
+        standings: true,
       },
-      "status_details": {
-        "long": "Match Finished",
-        "extra": 6,
-        "short": "FT",
-        "elapsed": 90
-      }
-    }
+      status_details: {
+        long: 'Match Finished',
+        extra: 6,
+        short: 'FT',
+        elapsed: 90,
+      },
+    },
   },
   {
     id: 'mat_791648',
@@ -139,57 +141,57 @@ const testFixtures = [
     notification_type: 'email',
     notification_status: 'pending',
     fixture_data: {
-      "date": "2025-06-15",
-      "time": "16:00:00",
-      "venue": "TQL Stadium",
-      "league": "FIFA Club World Cup",
-      "periods": {
-        "first": 1750003200,
-        "second": 1750006800
+      date: '2025-06-15',
+      time: '16:00:00',
+      venue: 'TQL Stadium',
+      league: 'FIFA Club World Cup',
+      periods: {
+        first: 1750003200,
+        second: 1750006800,
       },
-      "referee": "Issa Sy",
-      "timezone": "UTC",
-      "away_team": "Liverpool FC",
-      "date_time": "2025-06-15T16:00:00.000Z",
-      "home_team": "Manchester United FC",
-      "timestamp": 1750003200,
-      "sport_type": "soccer",
-      "teams_details": {
-        "away": {
-          "id": 2537,
-          "logo": "https://media.api-sports.io/football/teams/2537.png",
-          "name": "Liverpool FC",
-          "winner": false
+      referee: 'Issa Sy',
+      timezone: 'UTC',
+      away_team: 'Liverpool FC',
+      date_time: '2025-06-15T16:00:00.000Z',
+      home_team: 'Manchester United FC',
+      timestamp: 1750003200,
+      sport_type: 'soccer',
+      teams_details: {
+        away: {
+          id: 2537,
+          logo: 'https://media.api-sports.io/football/teams/2537.png',
+          name: 'Liverpool FC',
+          winner: false,
         },
-        "home": {
-          "id": 157,
-          "logo": "https://media.api-sports.io/football/teams/157.png",
-          "name": "Manchester United FC",
-          "winner": true
-        }
+        home: {
+          id: 157,
+          logo: 'https://media.api-sports.io/football/teams/157.png',
+          name: 'Manchester United FC',
+          winner: true,
+        },
       },
-      "venue_details": {
-        "id": 19229,
-        "city": "Manchester, England",
-        "name": "Old Trafford"
+      venue_details: {
+        id: 19229,
+        city: 'Manchester, England',
+        name: 'Old Trafford',
       },
-      "api_fixture_id": "1321681",
-      "league_details": {
-        "id": 15,
-        "flag": null,
-        "logo": "https://media.api-sports.io/football/leagues/15.png",
-        "name": "FIFA Club World Cup",
-        "round": "Group Stage - 1",
-        "season": 2025,
-        "country": "World",
-        "standings": true
+      api_fixture_id: '1321681',
+      league_details: {
+        id: 15,
+        flag: null,
+        logo: 'https://media.api-sports.io/football/leagues/15.png',
+        name: 'FIFA Club World Cup',
+        round: 'Group Stage - 1',
+        season: 2025,
+        country: 'World',
+        standings: true,
       },
-      "status_details": {
-        "long": "Match Finished",
-        "extra": 6,
-        "short": "FT",
-        "elapsed": 90
-      }
+      status_details: {
+        long: 'Match Finished',
+        extra: 6,
+        short: 'FT',
+        elapsed: 90,
+      },
     },
   },
   {
@@ -203,91 +205,94 @@ const testFixtures = [
     notification_type: 'slack',
     notification_status: 'pending',
     fixture_data: {
-      "date": "2025-06-15",
-      "time": "16:00:00",
-      "venue": "TQL Stadium",
-      "league": "FIFA Club World Cup",
-      "periods": {
-        "first": 1750003200,
-        "second": 1750006800
+      date: '2025-06-15',
+      time: '16:00:00',
+      venue: 'TQL Stadium',
+      league: 'FIFA Club World Cup',
+      periods: {
+        first: 1750003200,
+        second: 1750006800,
       },
-      "referee": "Issa Sy",
-      "timezone": "UTC",
-      "away_team": "Everton FC",
-      "date_time": "2025-06-15T16:00:00.000Z",
-      "home_team": "Manchester City FC",
-      "timestamp": 1750003200,
-      "sport_type": "soccer",
-      "teams_details": {
-        "away": {
-          "id": 2537,
-          "logo": "https://media.api-sports.io/football/teams/2537.png",
-          "name": "Everton FC",
-          "winner": false
+      referee: 'Issa Sy',
+      timezone: 'UTC',
+      away_team: 'Everton FC',
+      date_time: '2025-06-15T16:00:00.000Z',
+      home_team: 'Manchester City FC',
+      timestamp: 1750003200,
+      sport_type: 'soccer',
+      teams_details: {
+        away: {
+          id: 2537,
+          logo: 'https://media.api-sports.io/football/teams/2537.png',
+          name: 'Everton FC',
+          winner: false,
         },
-        "home": {
-          "id": 157,
-          "logo": "https://media.api-sports.io/football/teams/157.png",
-          "name": "Manchester City FC",
-          "winner": true
-        }
+        home: {
+          id: 157,
+          logo: 'https://media.api-sports.io/football/teams/157.png',
+          name: 'Manchester City FC',
+          winner: true,
+        },
       },
-      "venue_details": {
-        "id": 19229,
-        "city": "Manchester, England",
-        "name": "Old Trafford"
+      venue_details: {
+        id: 19229,
+        city: 'Manchester, England',
+        name: 'Old Trafford',
       },
-      "api_fixture_id": "1321681",
-      "league_details": {
-        "id": 15,
-        "flag": null,
-        "logo": "https://media.api-sports.io/football/leagues/15.png",
-        "name": "FIFA Club World Cup",
-        "round": "Group Stage - 1",
-        "season": 2025,
-        "country": "World",
-        "standings": true
+      api_fixture_id: '1321681',
+      league_details: {
+        id: 15,
+        flag: null,
+        logo: 'https://media.api-sports.io/football/leagues/15.png',
+        name: 'FIFA Club World Cup',
+        round: 'Group Stage - 1',
+        season: 2025,
+        country: 'World',
+        standings: true,
       },
-      "status_details": {
-        "long": "Match Finished",
-        "extra": 6,
-        "short": "FT",
-        "elapsed": 90
-      }
-    }
-  }
+      status_details: {
+        long: 'Match Finished',
+        extra: 6,
+        short: 'FT',
+        elapsed: 90,
+      },
+    },
+  },
 ];
 
 async function sendTestFixtures() {
   const isLocal = process.env.NODE_ENV === 'local';
   const queueUrl = getQueueUrl();
   const sqsClient = createSQSClient();
-  
-  console.log(`Sending test fixtures to ${isLocal ? 'local' : 'production'} queue:`, queueUrl);
-  
+
+  logger.info(
+    `Sending test fixtures to ${isLocal ? 'local' : 'production'} queue:`,
+    queueUrl
+  );
+
   for (const fixture of testFixtures) {
     const params = {
       QueueUrl: queueUrl,
       MessageBody: JSON.stringify(fixture),
       MessageAttributes: {
-        'MessageType': {
+        MessageType: {
           DataType: 'String',
-          StringValue: 'FIXTURE'
-        }
-      }
+          StringValue: 'FIXTURE',
+        },
+      },
     };
 
     try {
       const command = new SendMessageCommand(params);
       const response = await sqsClient.send(command);
-      console.log(`Sent fixture ${fixture.id}:`, response.MessageId);
+      logger.info(`Sent fixture ${fixture.id}:`, response.MessageId);
     } catch (error) {
-      console.error('Error sending message:', error);
+      logger.error('Error sending message:', error);
     }
   }
 }
 
 // Run the script
 sendTestFixtures()
-  .then(() => console.log('Finished sending test fixtures'))
-  .catch(console.error); 
+  .then(() => logger.info('Finished sending test fixtures'))
+  .catch(logger.error);
